@@ -49,13 +49,12 @@ code segment
 
 start:
     cld                                        ;DF is not guaranteed clear at entry
-    mov cx, 13                                 ;Row count (entry CX is not guaranteed);
+    mov dx, 13                                 ;Row count (entry DX is not guaranteed);
                                                ;row 12 borders knight jumps from h1
     mov si, offset init_db                     ;Set row metadata address
     mov di, offset board_db                    ;Set board address
 
 init_loop:
-    push cx                                    ;Save row counter
     mov ax, 0A0Dh                              ;Border = CR,LF
     stosw                                      ;Write two bytes
     stosw                                      ;Cols 0-3: 0D 0A 0D 0A
@@ -68,8 +67,8 @@ init_loop:
 
 init_cont:
     rep stosb                                  ;Write row
-    pop cx                                     ;Restore row counter
-    loop init_loop                             ;Rows 10+ self-feed from board
+    dec dx                                     ;Decrement row counter
+    jne init_loop                              ;Rows 10+ self-feed from board
 
 main_loop:
     mov si, offset board_db + 24               ;Row 2 (black back rank), col 0
